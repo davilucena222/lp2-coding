@@ -1,0 +1,28 @@
+-> É possível obter informações de outros programas através do retorno de outros programas
+e das suas saídas
+    exit(int) -> finaliza o programa
+    return na main (valor int) -> também finaliza um programa
+    kill ou outros sinais -> também finalizam um programa
+
+getpid() -> retorna o process id do processo
+
+wait() -> 
+waitpid(int, int*, int):
+    -> primeiro parâmetro (process id específico)
+        valor < -1 (aguarda pelo término de process id's que pertencem ao meu grupo de processos)
+        valor = -1 (aguarda todos os descendentes, todos os que foram clonado pelo processo original)
+        valor = 0 (aguarda por descendentes do grupo, descendentes que podem ter sido repassados para outro grupo)
+        valor > 0 (aguarda o processo com um pid específico)
+
+    -> segundo parâmetro (ponteiro para int, assinatura para a variável receber o status de um programa):
+    -> terceiro parâmetro (constantes do próprio sistema):
+        WNOHANG -> retorna imediatamente se nenhum descendente foi finalizado 
+        WUNTRACED -> retorna se um descendente foi finalizado. Status dos descendentes é retornado
+        WCONTINUED -> retorna se um descendente que foi finalizado foi resumido pelo SO (ter a sua execução continuada)
+
+WEXITSTATUS -> converte o valor fornecido pelo usuário por cima do valor de retorno do processo onde tal ação foi realizada, utilizou o valor informado pelo usuário como valor de saída do processo
+
+
+
+exec() - família de funções 
+execve() - família de funções 
