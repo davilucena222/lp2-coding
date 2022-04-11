@@ -1,0 +1,12 @@
+-> Processo criado é independente 
+-> Processo original não tem como pegar os contextos de execução do processo cloando, apenas quando a execução terminar. O resultado só é possível ser capturado apenas após o término da execução do processo.
+
+-> Threads compartilham o mesmo espaço de memória e possuem menos custo ao serem instanciadas e são executadas de forma concorrente
+-> função main() - é uma thread sendo executada
+-> função pthread_create() -> é utilizada para inicializar uma thread
+-> função pthread_join() -> retorna um valor inteiro que também indica diferentes códigos de erro em contraste com uma função que define uma variável global "errno" . O valor de retorno é 0 se a chamada foi bem-sucedida e isso garante que o thread fornecido foi encerrado.
+
+-> função pthread_join("primeiro parametro de pthread_create - referência da thread criada") -> retoma a execução da função, mas sem concorrência. Traz de volta a função para a linha de execução da função main. Desliga a concorrência da função, joga ela para execução de um mesmo programa (ex: função main())  
+
+-> A ordem da execução pode mudar ao instanciar threads ao longo da execução (o escalonador é quem define tal execução)
+-> As threads são executadas de forma concorrente com as outras execuções padrões do programa atual
