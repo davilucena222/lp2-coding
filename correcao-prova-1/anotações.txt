@@ -1,0 +1,1 @@
+pthread_mutex_lock() -> função/comando que bloqueia/trava a parte de um código (pedaço de código), a execução é feita uma por vez, após o término da execução o bloco de código é liberado de novo para receber a entrada e prosseguir para a execução.
