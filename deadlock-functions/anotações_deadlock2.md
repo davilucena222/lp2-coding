@@ -6,4 +6,4 @@
 
 #Spinlock: não existe entrada eventual garantida. Pois, não existe escalonador justo. O spinlock é uma variável ou trava que determina se uma thread/processo deve entrar na seção crítica ou não.
     
-    #Test and Set: teste de trava para a seção a crítica. Altera o valor de uma variável para modificar o contexto da seção crítica e a entrada de threads/processos na seção.
+#Test and Set: teste de trava para a seção a crítica. Altera o valor de uma variável para modificar o contexto da seção crítica e a entrada de threads/processos na seção.
