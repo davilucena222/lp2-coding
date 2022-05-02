@@ -1,0 +1,3 @@
+-> Contenção de memória: testando e incrementando em apenas uma variável
+
+-> Barreira: bloqueia todas as threads em um ponto até que todas cheguem lá e depois libera, enquanto que em travas bloqueia todas, mas deixa uma passar.
