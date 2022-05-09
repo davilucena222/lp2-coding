@@ -1,0 +1,3 @@
+-> Thread coordenador: faz a detecção de todas as outras as threads e sinaliza para uma outra thread. Além disso a primeira thread só será liberada quando todas as outras chegarem, e elas ficarão bloqueadas até a thread que ultrapassou a barreira finalizar a sua execução na seção crítica. 
+
+-> Flags: são formas de sinalizar que uma thread chegou em uma seção crítica/ponto de embarreiramento. 
