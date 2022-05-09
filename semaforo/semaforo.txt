@@ -1,0 +1,15 @@
+-> Semáforo é uma forma de obter sincronização entre processos: 
+    -> Semáforos resolvem o problema de EXCLUSÃO MÚTUA e SINCRONISMO CONDICIONAL;
+    -> Ordenar o acesso a ums seção crítica;
+    -> E manipular a exclusão mútua;
+    -> Valor do semáforo é um inteiro não negativo;
+    -> Inicializar o semáforo com um valor;
+    -> Altera o valor do semáforo com "wait" e "signal";
+    -> Tais funções decrementam o valor do semáforo;
+    -> Se uma thread decrementar o valor do semáforo que é igual a zero ela fica bloqueada, Função wait (decrementa o valor do semáforo);
+    -> Função signal: se o valor do semáforo for igual a zero a função signal "acorda" a thread e incrementa o valor do semáforo, ele praticamente desbloqueia a thread;
+    -> Função wait e signal são atômicas;
+    -> Não existe semáforo para armazenar negativo;
+    -> Semáforo binário armazenar apenas 0 ou 1;
+    -> As threads são "acordadas" na ordem em que chegaram;
+    -> Manutenção de ordem de chegada das threads no protocolo de entrada.
