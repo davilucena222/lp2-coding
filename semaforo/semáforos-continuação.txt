@@ -1,0 +1,9 @@
+-> Dois tipos de semáforos:
+    -> Semáforo binário: assume apenas valores 0 e 1;
+    -> Semáforo genérico: pode assumir valor negativo.
+
+-> Os processos são despertados na mesma ordem em que são retardados quando executam a operação de decremento ou incremento do semáforo.
+
+-> Ao utilizar uma variável de forma padrão (normal) o escalonador pode escalonar uma thread para uma seção crítica e ela monopolizar aquela parte do código, por este motivo utilizam-se funções atômicas para realizar tais operações de incremento, decremento, verificação e alteração na seção crítica para evitar tal ocorrência. 
+
+-> Variável do tipo "sem_t" (tipo semáforo) que só pode guardar valor 0 ou valores positivo.
