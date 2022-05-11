@@ -1,6 +1,6 @@
 -> Semáforo é uma forma de obter sincronização entre processos: 
     -> Semáforos resolvem o problema de EXCLUSÃO MÚTUA e SINCRONISMO CONDICIONAL;
-    -> Ordenar o acesso a ums seção crítica;
+    -> Ordenar o acesso a uma seção crítica;
     -> E manipular a exclusão mútua;
     -> Valor do semáforo é um inteiro não negativo;
     -> Inicializar o semáforo com um valor;
