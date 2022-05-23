@@ -1,0 +1,17 @@
+1. Seção crítica: conjunto de instruções que executam um recurso compartilhado e que não podem ser acessados ao mesmo tempo.
+(fala o problema e utiliza as propriedades)
+    -> Formas de resolução:
+        -> exclusão mútua;
+        -> ausência de deadlock;
+        -> Atraso desnescessãrio;
+
+2. Seção crítica + pthreads:
+    -> Resolução do problema do ciclo de vida das threads
+        pthread_create() - cria e executa uma thread;
+        pthread_exit() - finaliza uma thread;
+        pthread_join() - traz de volta a execução para a thread corrente.
+
+    Resolução do problema do ciclo de vida:
+        -> Uso da exclusão mútua para solucionar o problema da seção crítica:
+            pthread_mutex_lock() - protocolo de entrada;
+            pthread_mutex_unlock() - protocolo de saída.
