@@ -1,0 +1,217 @@
+1) O que é o problema da seção crítica? Dê exemplos de situações onde tal problema acontece e fale sobre as propriedades almejadas para uma solução ideal.
+
+	O problema da seção crítica é uma região onde threads ou processos vão está disputando o acesso ao mesmo tempo. É neste momento que a seção crítica vai precisar garantir que quando um processo ou thread estiver executando sua seção crítica nenhum outro processo ou thread entre na sua respectiva Seção Crítica. Um exemplo de ocorrência pode ser uma memória compartilhada onde uma variável está armazenada com um respetivo valor, um dado que só pode ser alterado por um processo específico ou um buffer compartilhado onde esse tipo de memória limitada recebe dados variáveis e também envia dados podendo ocorrer conflitos de envio ou troca de dados e duas ou mais threads estão tentando acessar este local devido o escalonamento do sistema. Desta forma, uma solução ideal seria garantir uma acesso único ou um acesso por vez a cada uma das threads na medida que a thread atual finalizasse a sua operação naquela determinada região fazendo uso de locks ou travas, outra abordagem de resolução de problema seria também o uso de semáforos.
+
+2) Relacione o controle do ciclo de vida de threads a partir da API POSIX Threads (PThreads) com o problema da seção crítica e cite uma forma de usar recursos da API PThreads para contornar este problema.
+
+	O controle do ciclo de vida das threads que usam a API POSIX Thread, consiste na utilização dos métodos pthread_create(), que serve para criar uma nova thread; pthread_exit(), que serve para finalizar uma thread em execução; pthread_join(), que serve para trazer a execução da thread de volta ao contexto da função main. Para solucionar o problema da seção crítica fazemos uso dos métodos pthread_mutex_lock(), que serve para bloquear o acesso a seção crítica; pthread_mutex_unlock(), que serve para desbloquear o acesso a seção crítica.
+
+3) Elabore (em código C/C++) uma solução para o problema da seção crítica. Em um sistema bancário múltiplas threads podem realizar operações de débito e crédito no saldo dos clientes – elabore uma solução para a manipulação do saldo utilizando locks, implementando o protocolo de entrada utilizando uma instrução atômica (destaque qual é esta instrução e como ela funciona). 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <stdatomic.h>
+#include <semaphore.h>
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+int lockOperacao = 0;
+int debito = 0;
+int credito = 0;
+int saldo = 0;
+
+#define QTD_THREADS 5
+
+void* operacaoBancariaDebitoCredito(void* p){
+  long index = (long)p;
+  int totalDebito = 0;
+  int totalCredito = 0;
+
+  while(pthread_mutex_lock(&lock));
+  printf("[%ld] - Iniciando operacoes...\n", index);
+  int valorGerado = rand() % 10000;
+  printf("[%ld] - Valor gerado para a operacao saldo: %d\n", index, saldo);
+  if ((index % 2) == 0) {
+    printf("[%ld] - Operacao de credito\n", index);
+    saldo += valorGerado;
+  } else {
+    printf("[%ld] - Operacao de debito\n", index);
+    saldo -= valorGerado;
+  }
+  puts(".."); 
+  pthread_mutex_unlock(&lock);
+}
+
+int main(void){
+  pthread_t threads[QTD_THREADS];
+	time_t tempo;
+  srand(time(&tempo));
+
+  for(long i = 0; i < QTD_THREADS; i++){
+    sleep(1);
+    pthread_create(&threads[i], NULL, operacaoBancariaDebitoCredito, (void*)i);
+  }
+
+  for(int i = 0; i < QTD_THREADS; i++) {
+    pthread_join(threads[i], NULL);
+  }
+
+  printf("Valor do saldo = R$ %d\n", saldo);
+
+  return(0);
+}
+
+4) Faça um programa em C/C++ onde 6 threads (além da principal) gerarão uma letra aleatória (caractere) cada. Estas letras deverão ser combinadas em uma palavra (uma string) na thread principal (função  main), quedeverá exibi-la e também determinar se esta é um palíndromo ou não. Palíndromos são frases ou palavras quepodem ser lidas, indiferentemente, da esquerda para a direita, conforme o sentido habitual da leitura, ou da direitapara a esquerda, sem que haja mudança da sua significação (exemplos de palíndromos com 6 letras: “AAAAAA”,“ABAABA”, “ABCCBA”, “MUSSUM”). Repita este processo 10 vezes e use barreiras para sincronizar as threads.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <semaphore.h>
+#include <time.h>
+#include <string.h>
+
+#define QTD_LETRAS 6
+#define QTD_EXEC 10
+
+char palavra[QTD_LETRAS];
+int palavras_geradas = 0;
+
+pthread_barrier_t barreira;
+
+void* gera_letra(void* p) {
+    long id = (long)p;
+    while (palavras_geradas < QTD_EXEC) {
+        char letra = 65 + (rand() % 26);
+        palavra[id] = letra;
+        pthread_barrier_wait(&barreira);
+    }
+}
+
+int main(void) {
+    pthread_t threads[QTD_LETRAS];
+    time_t t;
+
+    srand(time(&t));
+
+    pthread_barrier_init(&barreira, NULL, QTD_LETRAS + 1);
+
+    for (long x = 0; x < QTD_LETRAS; x++){
+        pthread_create(&threads[x], NULL, gera_letra, (void*)x);
+    }
+
+
+    while (palavras_geradas < QTD_EXEC) {
+        pthread_barrier_wait(&barreira);
+
+        int x = 0;
+        int letras_iguais = 0;
+
+        do {
+            if (palavra[x] == palavra[QTD_LETRAS - (x + 1)]) {
+                letras_iguais++;
+            }
+            x++;
+        } while (x != QTD_LETRAS);
+
+        printf("palavra = %s\n", palavra);
+
+        if (letras_iguais == QTD_LETRAS) {
+            printf("Palindromo\n\n");
+        } else {
+            printf("Nao eh palindromo\n\n");
+        }
+        __sync_fetch_and_add(&palavras_geradas, 1);
+    }
+
+    // Barreira da main, pois as threads ainda estão em execução
+    pthread_barrier_wait(&barreira);
+    pthread_barrier_destroy(&barreira);
+
+    return 0;
+}
+
+5) Faça um programa em C/C++ onde são criadas 2 threads: uma thread produtora, e a outra consumidora. A thread produtora deverá gerar 100 valores inteiros aleatórios entre 0 e 255 e armazenar em um array compartilhado com 10 posições. A thread consumidora buscará as informações no array e exibi-los, de forma que nenhum valor seja perdido. Use semáforos implementando a solução do buffer compartilhado.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <stdatomic.h>
+#include <semaphore.h>
+
+#define QTD_GENERATE 100
+#define BUFFER_SIZE 10
+
+int buffer[BUFFER_SIZE];
+int frente = 0;
+int tras = 0;
+sem_t vazio;
+sem_t cheio;
+
+void* threadProdutora(void* p){
+  int contador = 0;
+  int valor;
+
+  while(contador < QTD_GENERATE){
+    sem_wait(&vazio);//decrementa de 1 para 0 (sinalizando que a seção crítica está em uso)
+    valor = rand() % 255;
+    printf("[ESCOPO PRODUTOR] - Valor = %d\n", valor);
+    sleep(1);
+    buffer[tras] = valor;
+    tras = (tras + 1) % BUFFER_SIZE;
+    sem_post(&cheio);//incrementa de 0 para 1 (sinalizando que a seção crítica está livre)
+    contador += 1;
+  }
+}
+
+void* threadConsumidora(void* p){
+  int contador = 0;
+  int valor_consumido;
+
+  /*for(int i = 0; i < BUFFER_SIZE; i++){
+    buffer[i] = 0;
+  }*/
+
+  while(contador < QTD_GENERATE){
+    sem_wait(&cheio);//decrementa de 1 para 0 (sinalizando que a seção crítica está em uso)
+    valor_consumido = buffer[frente];
+    frente = (frente + 1) % BUFFER_SIZE;
+    printf("[ESCOPO CONSUMIDOR] - Valor = %d\n", valor_consumido);
+    sleep(2);
+    sem_post(&vazio);//incrementa de 0 para 1 (sinalizando que a seção crítica está livre)
+    contador += 1;
+  }
+}
+
+int main(void){
+  pthread_t produtora;
+  pthread_t consumidora;
+
+  sem_init(&vazio, 0 , BUFFER_SIZE);
+  //sem_init(&vazio, 0 , 1);
+  sem_init(&cheio, 0 , 0);
+
+  time_t tempo;
+  srand(time(&tempo));
+
+  pthread_create(&produtora, NULL, threadProdutora, NULL);
+  pthread_create(&consumidora, NULL, threadConsumidora, NULL);
+
+  pthread_join(produtora, NULL);
+  pthread_join(consumidora, NULL);
+
+  sem_destroy(&vazio);
+  sem_destroy(&cheio);
+
+  return(0);
+}
