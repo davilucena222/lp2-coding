@@ -1,0 +1,20 @@
+-> IP - INTERNET PROTOCOL: 
+
+-> Servidor:
+    -> cria o socket;
+    -> aguarda a recepção de conexão
+    -> realiza as atividades;
+    -> notificar o SO através da função listen();
+    -> função accept() - servidor fica bloqueado nessa função e quando ele desbloqueia significa que ele recebeu uma nova solicitação de conexão, dessa forma é criado um novo socket e as funções read() e write() são liberadas;
+
+-> Cliente:
+    -> cada novo cliente é desbloqueado na função accept();
+    -> e em seguida é passada as informações de conexão como a porta e o servidor
+
+-> Socket Datagrama:
+    -> servidor:
+        -> cria o socket;
+        -> executa um função primeiro, função receivefrom(), repassa uma estrutura vazia para receber as informações do cliente
+
+    -> Cliente    
+        -> em seguida executa a função sendto()
